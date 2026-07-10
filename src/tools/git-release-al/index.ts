@@ -26,7 +26,8 @@ async function execCommand(command: string, cwd?: string): Promise<string> {
 
 async function checkCommandExists(command: string): Promise<boolean> {
     try {
-        await execAsync(`which ${command}`);
+        const isWindows = process.platform === 'win32';
+        await execAsync(`${isWindows ? 'where' : 'which'} ${command}`);
         return true;
     } catch {
         return false;
@@ -62,6 +63,15 @@ async function tagExists(tag: string, cwd: string): Promise<boolean> {
     }
 }
 
+async function tagExistsOnRemote(tag: string, cwd: string): Promise<boolean> {
+    try {
+        const output = await execCommand(`git ls-remote --tags origin ${tag}`, cwd);
+        return output !== '';
+    } catch {
+        return false;
+    }
+}
+
 async function releaseExists(tag: string, owner: string, repo: string, cwd: string): Promise<boolean> {
     try {
         await execCommand(`gh release view "${tag}" --repo "${owner}/${repo}"`, cwd);
@@ -89,6 +99,8 @@ function createZip(sourcePath: string, zipPath: string): Promise<void> {
         archive.finalize();
     });
 }
+
+export { tagExistsOnRemote };
 
 export async function registerGitReleaseAl(context: vscode.ExtensionContext): Promise<void> {
     const command = vscode.commands.registerCommand('dev-tools.gitReleaseAl', async () => {
@@ -199,6 +211,9 @@ export async function registerGitReleaseAl(context: vscode.ExtensionContext): Pr
                             showInfo('Release cancelled.');
                             return;
                         }
+                    } else if (!(await tagExistsOnRemote(tag, cwd))) {
+                        showError(`Tag "${tag}" exists locally but has not been pushed to remote. Push it first before creating a release.`);
+                        return;
                     }
 
                     progress.report({ message: `Checking if release "${tag}" already exists...` });
