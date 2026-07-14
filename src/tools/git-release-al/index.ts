@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import archiver from 'archiver';
+import archiver = require('archiver');
 import { resolveWorkspaceRepoRoot } from '../../shared/git';
 
 const execAsync = promisify(exec);
@@ -200,7 +200,6 @@ export async function registerGitReleaseAl(context: vscode.ExtensionContext): Pr
                             `Tag "${tag}" does not exist. Create and push it?`,
                             { modal: true },
                             'Create & Push',
-                            'Cancel'
                         );
 
                         if (action === 'Create & Push') {
@@ -212,8 +211,22 @@ export async function registerGitReleaseAl(context: vscode.ExtensionContext): Pr
                             return;
                         }
                     } else if (!(await tagExistsOnRemote(tag, cwd))) {
-                        showError(`Tag "${tag}" exists locally but has not been pushed to remote. Push it first before creating a release.`);
-                        return;
+                        progress.report({ message: `Tag "${tag}" not pushed to remote. Prompting user...` });
+                        const action = await vscode.window.showInformationMessage(
+                            `Tag "${tag}" exists locally but has not been pushed to remote. Push it now?`,
+                            { modal: true },
+                            'Push',
+                            'Cancel'
+                        );
+
+                        if (action === 'Push') {
+                            progress.report({ message: 'Pushing tag to remote...' });
+                            await execCommand(`git push origin ${tag}`, cwd);
+                            tagCreated = true;
+                        } else {
+                            showInfo('Release cancelled.');
+                            return;
+                        }
                     }
 
                     progress.report({ message: `Checking if release "${tag}" already exists...` });
