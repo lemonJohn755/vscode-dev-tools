@@ -2,7 +2,7 @@
   "name": "vscode-dev-tools",
   "displayName": "Dev Tools",
   "description": "Convert the active Markdown file to JIRA-compatible format and copy to clipboard.",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "publisher": "vincentlo",
   "repository": {
     "type": "git",
@@ -102,7 +102,7 @@
   "devDependencies": {
     "@types/node": "^25.9.1",
     "@types/vscode": "^1.85.0",
-    "esbuild": "^0.23.0",
+    "esbuild": "^0.28.1",
     "typescript": "^5.4.0",
     "vitest": "^3.0.0"
   }

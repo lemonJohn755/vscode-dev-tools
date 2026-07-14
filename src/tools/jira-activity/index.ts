@@ -111,7 +111,7 @@ async function parseFeed(xmlText: string): Promise<ActivityRecord[]> {
 
 function _printTable(records: ActivityRecord[]): string {
   if (!records.length) return 'No activity found.';
-  const headers = ['Activity Summary', 'Key', 'Timestamp'];
+  const headers: [string, string, string] = ['Activity Summary', 'Key', 'Timestamp'];
   let colSummary = Math.max(headers[0].length, ...records.map(r => r.summary.length));
   let colKey = Math.max(headers[1].length, ...records.map(r => r.key.length));
   let colTimestamp = Math.max(headers[2].length, ...records.map(r => r.timestamp.length));
