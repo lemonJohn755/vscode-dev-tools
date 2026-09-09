@@ -65,7 +65,7 @@ async function pickContent(
 
 async function openResult(content: string, language: string): Promise<void> {
     const doc = await vscode.workspace.openTextDocument({ content, language });
-    await vscode.window.showTextDocument(doc, { viewColumn: vscode.ViewColumn.Beside, preview: true });
+    await vscode.window.showTextDocument(doc, { preview: true });
 }
 
 export async function runTransformCommand(opts: TransformRunnerOptions): Promise<void> {
