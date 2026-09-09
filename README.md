@@ -11,6 +11,7 @@ Open the Command Palette (`Cmd+Shift+P`) and run:
 | `Dev Tools: Export MD to JIRA (Cloud)` | Markdown (for JIRA Cloud) |
 | `Dev Tools: Export MD to JIRA (Server)` | Wiki Markup (for JIRA Server / Confluence) |
 | `Dev Tools: Git Release (Zip)` | Creates a GitHub release from a `.app` file |
+| `Dev Tools: Git Create Private Remote` | Creates an empty private GitHub repository and optionally adds it as a named Git remote |
 | `Dev Tools: Git Commit Url (Copy)` | Shows recent commits in a picker, copies selected commit URL(s) to clipboard |
 | `Dev Tools: Git Commit Message (AI)` | Generates a Conventional Commits message from staged changes using a local or remote LLM, copies result to clipboard |
 | `Dev Tools: JSON - Parse` | Parses JSON (including double-encoded/stringified), displays prettified result in new document |
@@ -26,6 +27,12 @@ Open the Command Palette (`Cmd+Shift+P`) and run:
 | `Dev Tools: Epoch Convert` | Converts between epoch timestamps and ISO 8601 (current time, epoch↔ISO), copies result to clipboard |
 
 A toast notification confirms the content was copied to your clipboard.
+
+## Git Create Private Remote
+
+This command selects an existing workspace Git repository, creates an empty private repository on GitHub.com, and copies its browser URL to the clipboard. It then offers to add the repository as a Git remote using a required, user-specified name. Existing remote names cannot be replaced, and the command never pushes local commits.
+
+The GitHub owner defaults to the authenticated GitHub user and can be changed to an organization. The repository name defaults to the selected local repository's folder name. The Git remote URL uses the SSH or HTTPS protocol configured in GitHub CLI.
 
 ## JIRA Activity
 

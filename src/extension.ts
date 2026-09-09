@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { convertToJira } from './converter';
 import { registerGitReleaseAl } from './tools/git-release-al';
+import { registerGitCreatePrivateRemote } from './tools/git-create-private-remote';
 import { registerGitCommitUrl } from './tools/git-commit-url';
 import { registerJsonTools } from './tools/parse-stringified-json';
 import { registerTextTools } from './tools/minify-text';
@@ -21,6 +22,7 @@ export function activate(context: vscode.ExtensionContext): void {
         vscode.commands.registerCommand('dev-tools.jiraActivity', jiraActivityCommand),
     );
     registerGitReleaseAl(context);
+    registerGitCreatePrivateRemote(context);
     registerGitCommitUrl(context);
     registerJsonTools(context);
     registerTextTools(context);
