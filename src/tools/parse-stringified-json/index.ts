@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { runTransformCommand } from '../../shared/transform-runner';
-import { jsonParse, jsonMinify, jsonStringify } from './transforms';
+import { jsonParse, jsonMinify, jsonStringify, jsonExtractRawText } from './transforms';
 
 export async function registerJsonTools(context: vscode.ExtensionContext): Promise<void> {
     context.subscriptions.push(
@@ -33,6 +33,17 @@ export async function registerJsonTools(context: vscode.ExtensionContext): Promi
                 transform: jsonStringify,
                 successMessage: 'Stringified and displayed in new document.',
                 errorMessage: 'Invalid JSON: Unable to process the content.',
+                openLabel: 'Select JSON file',
+                filters: { 'JSON Files': ['json', 'txt'], 'All Files': ['*'] },
+            }),
+        ),
+        vscode.commands.registerCommand('dev-tools.jsonExtractRawText', () =>
+            runTransformCommand({
+                prefix: 'JSON - Extract Raw Text',
+                language: 'plaintext',
+                transform: jsonExtractRawText,
+                successMessage: 'Raw text extracted and displayed in new document.',
+                errorMessage: 'Expected a valid JSON string value.',
                 openLabel: 'Select JSON file',
                 filters: { 'JSON Files': ['json', 'txt'], 'All Files': ['*'] },
             }),

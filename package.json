@@ -55,6 +55,10 @@
         "title": "Dev Tools: JSON - Stringify"
       },
       {
+        "command": "dev-tools.jsonExtractRawText",
+        "title": "Dev Tools: JSON - Extract Raw Text"
+      },
+      {
         "command": "dev-tools.textMinify",
         "title": "Dev Tools: Text - Minify"
       },
@@ -101,7 +105,10 @@
           "description": "OpenAI-compatible endpoints for Git Commit Message (AI). Configure one or more; if more than one is set you'll be prompted to pick one each run.",
           "items": {
             "type": "object",
-            "required": ["name", "baseUrl"],
+            "required": [
+              "name",
+              "baseUrl"
+            ],
             "properties": {
               "name": {
                 "type": "string",
@@ -161,6 +168,7 @@
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
+    "@types/archiver": "^7.0.0",
     "@types/node": "^25.9.1",
     "@types/vscode": "^1.85.0",
     "esbuild": "^0.28.1",

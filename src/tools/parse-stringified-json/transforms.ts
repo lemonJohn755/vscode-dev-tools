@@ -22,3 +22,12 @@ export function jsonMinify(content: string): string {
 export function jsonStringify(content: string): string {
     return JSON.stringify(JSON.stringify(JSON.parse(content)));
 }
+
+/** Extracts the unescaped text represented by a JSON string value. */
+export function jsonExtractRawText(content: string): string {
+    const parsed: unknown = JSON.parse(content);
+    if (typeof parsed !== 'string') {
+        throw new TypeError('Expected a JSON string value.');
+    }
+    return parsed;
+}

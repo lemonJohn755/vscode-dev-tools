@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { jsonParse, jsonMinify, jsonStringify } from './transforms';
+import { jsonParse, jsonMinify, jsonStringify, jsonExtractRawText } from './transforms';
 
 describe('jsonParse', () => {
     it('prettifies minified JSON', () => {
@@ -64,5 +64,21 @@ describe('jsonStringify', () => {
 
     it('throws on invalid JSON', () => {
         expect(() => jsonStringify('not json')).toThrow();
+    });
+});
+
+describe('jsonExtractRawText', () => {
+    it('extracts decoded text from a JSON string value', () => {
+        expect(jsonExtractRawText('"Hello\\nworld"')).toBe('Hello\nworld');
+    });
+
+    it('decodes escaped quotes, backslashes, and Unicode', () => {
+        expect(jsonExtractRawText('"A \\\"quote\\\", a \\\\ slash, and \\u263A"'))
+            .toBe('A "quote", a \\ slash, and ☺');
+    });
+
+    it('rejects invalid JSON and non-string JSON values', () => {
+        expect(() => jsonExtractRawText('not json')).toThrow();
+        expect(() => jsonExtractRawText('{"text":"hello"}')).toThrow('Expected a JSON string value.');
     });
 });
