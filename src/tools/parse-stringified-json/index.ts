@@ -46,6 +46,7 @@ export async function registerJsonTools(context: vscode.ExtensionContext): Promi
                 errorMessage: 'Expected a valid JSON string value.',
                 openLabel: 'Select JSON file',
                 filters: { 'JSON Files': ['json', 'txt'], 'All Files': ['*'] },
+                useSelection: true,
             }),
         ),
     );

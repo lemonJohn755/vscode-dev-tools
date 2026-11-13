@@ -8,6 +8,7 @@ export interface TransformRunnerOptions {
     errorMessage: string;
     openLabel: string;
     filters: { [key: string]: string[] };
+    useSelection?: boolean;
 }
 
 function showError(prefix: string, message: string): void {
@@ -22,6 +23,8 @@ async function pickContent(
     prefix: string,
     openLabel: string,
     filters: { [key: string]: string[] },
+    useSelection: boolean,
+    selectedContent?: string,
 ): Promise<string | undefined> {
     const choice = await vscode.window.showQuickPick(
         [
@@ -40,6 +43,9 @@ async function pickContent(
         if (!editor) {
             showError(prefix, 'No active editor open.');
             return undefined;
+        }
+        if (useSelection && selectedContent !== undefined) {
+            return selectedContent;
         }
         return editor.document.getText();
     }
@@ -69,7 +75,11 @@ async function openResult(content: string, language: string): Promise<void> {
 }
 
 export async function runTransformCommand(opts: TransformRunnerOptions): Promise<void> {
-    const content = await pickContent(opts.prefix, opts.openLabel, opts.filters);
+    const editor = vscode.window.activeTextEditor;
+    const selectedContent = opts.useSelection && editor && !editor.selection.isEmpty
+        ? editor.document.getText(editor.selection)
+        : undefined;
+    const content = await pickContent(opts.prefix, opts.openLabel, opts.filters, opts.useSelection ?? false, selectedContent);
     if (content === undefined) {
         return;
     }
