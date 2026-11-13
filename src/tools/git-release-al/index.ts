@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import archiver = require('archiver');
+import archiver = require('archiver');
 import { resolveWorkspaceRepoRoot } from '../../shared/git';
 
 const execAsync = promisify(exec);
@@ -26,6 +27,8 @@ async function execCommand(command: string, cwd?: string): Promise<string> {
 
 async function checkCommandExists(command: string): Promise<boolean> {
     try {
+        const isWindows = process.platform === 'win32';
+        await execAsync(`${isWindows ? 'where' : 'which'} ${command}`);
         const isWindows = process.platform === 'win32';
         await execAsync(`${isWindows ? 'where' : 'which'} ${command}`);
         return true;
@@ -76,6 +79,15 @@ async function releaseExists(tag: string, owner: string, repo: string, cwd: stri
     try {
         await execCommand(`gh release view "${tag}" --repo "${owner}/${repo}"`, cwd);
         return true;
+    } catch {
+        return false;
+    }
+}
+
+async function tagExistsOnRemote(tag: string, cwd: string): Promise<boolean> {
+    try {
+        const output = await execCommand(`git ls-remote --tags origin ${tag}`, cwd);
+        return output !== '';
     } catch {
         return false;
     }
