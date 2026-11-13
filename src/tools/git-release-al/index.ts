@@ -4,7 +4,6 @@ import * as fs from 'fs';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import archiver = require('archiver');
-import archiver = require('archiver');
 import { resolveWorkspaceRepoRoot } from '../../shared/git';
 
 const execAsync = promisify(exec);
@@ -27,8 +26,6 @@ async function execCommand(command: string, cwd?: string): Promise<string> {
 
 async function checkCommandExists(command: string): Promise<boolean> {
     try {
-        const isWindows = process.platform === 'win32';
-        await execAsync(`${isWindows ? 'where' : 'which'} ${command}`);
         const isWindows = process.platform === 'win32';
         await execAsync(`${isWindows ? 'where' : 'which'} ${command}`);
         return true;
@@ -60,24 +57,6 @@ function parseGitHubRepo(remoteUrl: string): { owner: string; repo: string } | n
 async function tagExists(tag: string, cwd: string): Promise<boolean> {
     try {
         await execCommand(`git rev-parse ${tag}`, cwd);
-        return true;
-    } catch {
-        return false;
-    }
-}
-
-async function tagExistsOnRemote(tag: string, cwd: string): Promise<boolean> {
-    try {
-        const output = await execCommand(`git ls-remote --tags origin ${tag}`, cwd);
-        return output !== '';
-    } catch {
-        return false;
-    }
-}
-
-async function releaseExists(tag: string, owner: string, repo: string, cwd: string): Promise<boolean> {
-    try {
-        await execCommand(`gh release view "${tag}" --repo "${owner}/${repo}"`, cwd);
         return true;
     } catch {
         return false;
@@ -239,27 +218,6 @@ export async function registerGitReleaseAl(context: vscode.ExtensionContext): Pr
                             showInfo('Release cancelled.');
                             return;
                         }
-                    }
-
-                    progress.report({ message: `Checking if release "${tag}" already exists...` });
-                    if (await releaseExists(tag, owner, repo, cwd)) {
-                        const action = await vscode.window.showWarningMessage(
-                            `A GitHub release for tag "${tag}" already exists. Delete it first?`,
-                            { modal: true },
-                            'Delete & Recreate',
-                            'Cancel'
-                        );
-
-                        if (action !== 'Delete & Recreate') {
-                            showInfo('Release cancelled.');
-                            return;
-                        }
-
-                        progress.report({ message: 'Deleting existing GitHub release...' });
-                        await execCommand(
-                            `gh release delete "${tag}" --repo "${owner}/${repo}" --yes`,
-                            cwd
-                        );
                     }
 
                     progress.report({ message: 'Creating zip archive...' });
